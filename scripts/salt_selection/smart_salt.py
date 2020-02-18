@@ -1,4 +1,4 @@
-# /opt/spark/current20/bin/spark-submit smart_salt.py  --exp_groups 10 10 --ntrials 2000 --account trivago 2> /dev/null
+account_4# /opt/spark/current20/bin/spark-submit smart_salt.py  --exp_groups 10 10 --ntrials 2000 --account account_4 2> /dev/null
 from __future__ import division, print_function
 import os
 import sys
@@ -43,45 +43,45 @@ def main():
     parser.add_argument("--test", nargs='+', type=int, default=1)
     parser.add_argument("--period", type=int, default=42)
     parser.add_argument("--ntrials", type=int, default=2000)
-    parser.add_argument("--pos", nargs = '+', type=str, default='All') 
+    parser.add_argument("--pos", nargs = '+', type=str, default='All')
     args = parser.parse_args()
 
     logging.info("Initialising with the following parameters:")
     logging.info(str(args))
-    
-    #  file zipping 
+
+    #  file zipping
     current_dir = os.path.dirname(os.path.realpath(__file__))
     current_dir = current_dir[:current_dir.find('scripts')]
     mod_file = os.path.join(current_dir, "exp_lib/python/utils/zip_module.py")
     sc.addPyFile(mod_file)
-    
+
     mod_zipping = importlib.import_module("zip_module")
     mod_zipping.zip_and_ship_module(current_dir)
     current_dir = os.path.dirname(os.path.realpath(__file__))
     zipped_file = os.path.join(current_dir,"exp_lib.zip")
     sc.addPyFile(zipped_file)
-    
-    # important relevant module for the account 
+
+    # important relevant module for the account
     mod = importlib.import_module("exp_lib.account.{0}".format(args.account))
     Metrics = [mod.NitsBookings,mod.NitsProfit]
     logging.info("Optimising split on metrics: {}".format([x for x in Metrics]))
-    experiment = mod.account(Metrics,  
+    experiment = mod.account(Metrics,
                              run_date=args.run_date,
                              exp_groups=args.exp_groups,
                              control=args.control,
                              test=args.test,
-                             exp_weights = args.exp_weights, 
+                             exp_weights = args.exp_weights,
                              period=args.period,
                              base_salt=args.base_salt,
-                             ntrials = args.ntrials, 
+                             ntrials = args.ntrials,
                              pos = args.pos)
 
     salt, pae = experiment.get_smart_salt()
     logging.info("Salt that produces the best split: {0}".format(salt))
     logging.info("The corresponding relative difference is: {0}".format(pae))
 
-    # remove the zipped file from directory 
+    # remove the zipped file from directory
     os.remove("exp_lib.zip")
-    
+
 if __name__ == "__main__":
     main()

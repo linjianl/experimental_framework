@@ -15,7 +15,7 @@ from exp_lib.account.base import ExperimentBase, MetricBase
 
 class account(ExperimentBase):
     """
-    Tripadivosr account class, child class of experimentBase class, the child class specifies the GHA account specific exp_weight,
+    account_3 account class, child class of experimentBase class, the child class specifies the account_1 account specific exp_weight,
     we do not set in advance because it is dynamic. Thus, every attribute is inherited from the experimentBase parent class.
     """
     pass
@@ -23,37 +23,37 @@ class account(ExperimentBase):
 class NitsBookings(MetricBase):
     """
     NitsBookings (per property) class, child class of MetricBase class, the child class obtain the defined metrics for the relevant account
-    
+
     Attributes:
         start_date  : string, the start date to obtain performance
         end_date    : string, the end date to obtain performance
-        pos         : string, point of sale, booker_country 
-        use_cuped   : boolean, use CUPED method or not 
-        cuped_period: integer, period for CUPED 
+        pos         : string, point of sale, booker_country
+        use_cuped   : boolean, use CUPED method or not
+        cuped_period: integer, period for CUPED
     """
 
 
     def __init__(self,start_date,end_date,pos,use_cuped=False,cuped_period=None):
-  
+
         self.metric_name = "nits_bookings"
         super(NitsBookings,self).__init__(self.metric_name,start_date,end_date,pos,use_cuped,cuped_period)
 
     def compute(self):
 
-        tripadvisorStats = TripAdvisorStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
-        return ( tripadvisorStats.get_stats_summary()
+        accountThreeStats = AccountThreeStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
+        return ( accountThreeStats.get_stats_summary()
                    .select("hotel_id","yyyy_mm_dd",self.metric_name) )
 
 class NitsProfit(MetricBase):
     """
     NitsProfit (per Property) class, child class of MetricBase class, the child class obtain the defined metrics for the relevant account
-    
-    Attributes: 
+
+    Attributes:
         start_date  : string, the start date to obtain performance
         end_date    : string, the end date to obtain performance
-        pos         : string, point of sale, booker_country 
-        use_cuped   : boolean, use CUPED method or not 
-        cuped_period: integer, period for CUPED 
+        pos         : string, point of sale, booker_country
+        use_cuped   : boolean, use CUPED method or not
+        cuped_period: integer, period for CUPED
     """
 
     def __init__(self,start_date,end_date,pos,use_cuped=False,cuped_period=None):
@@ -63,23 +63,23 @@ class NitsProfit(MetricBase):
 
     def compute(self):
 
-        tripadvisorStats = TripAdvisorStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
-        return ( tripadvisorStats.get_stats_summary()
+        accountThreeStats = AccountThreeStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
+        return ( accountThreeStats.get_stats_summary()
                    .select("hotel_id","yyyy_mm_dd",self.metric_name) )
 
 class GrossBookings(MetricBase):
-    
+
     """
     GrossBookings (per Property) class, child class of MetricBase class, the child class obtain the defined metrics for the relevant account
-    
-    Attributes: 
+
+    Attributes:
         start_date  : string, the start date to obtain performance
         end_date    : string, the end date to obtain performance
-        pos         : string, point of sale, booker_country 
-        use_cuped   : boolean, use CUPED method or not 
-        cuped_period: integer, period for CUPED 
+        pos         : string, point of sale, booker_country
+        use_cuped   : boolean, use CUPED method or not
+        cuped_period: integer, period for CUPED
     """
-    
+
     def __init__(self,start_date,end_date,pos,use_cuped=False,cuped_period=None):
 
         self.metric_name = "gross_bookings"
@@ -88,21 +88,21 @@ class GrossBookings(MetricBase):
 
     def compute(self):
 
-        tripadvisorStats = TripAdvisorStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
-        return ( tripadvisorStats.get_stats_summary()
+        accountThreeStats = AccountThreeStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
+        return ( accountThreeStats.get_stats_summary()
                    .select("hotel_id","yyyy_mm_dd",self.metric_name) )
 
 
 class GrossProfit(MetricBase):
     """
     GrossProfit (per Property) class, child class of MetricBase class, the child class obtain the defined metrics for the relevant account
-    
-    Attributes: 
+
+    Attributes:
         start_date  : string, the start date to obtain performance
         end_date    : string, the end date to obtain performance
-        pos         : string, point of sale, booker_country 
-        use_cuped   : boolean, use CUPED method or not 
-        cuped_period: integer, period for CUPED 
+        pos         : string, point of sale, booker_country
+        use_cuped   : boolean, use CUPED method or not
+        cuped_period: integer, period for CUPED
     """
 
     def __init__(self,start_date,end_date,pos,use_cuped=False,cuped_period=None):
@@ -113,33 +113,33 @@ class GrossProfit(MetricBase):
 
     def compute(self):
 
-        tripadvisorStats = TripAdvisorStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
-        return ( tripadvisorStats.get_stats_summary()
+        accountThreeStats = AccountThreeStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
+        return ( accountThreeStats.get_stats_summary()
                    .select("hotel_id","yyyy_mm_dd",self.metric_name) )
 
-class TripAdvisorStats(object):
+class AccountThreeStats(object):
     """
-    TripAdvisorStats class, obtain data for relevant performance metrics
+    AccountThreeStats class, obtain data for relevant performance metrics
 
     Attributes:
         start_date  : string, the start date to obtain performance
         end_date    : string, the end date to obtain performance
         pos         : list or string, point of sale, booker_country, default to 'All'
-        max_rpb     : float, max revenue per booking as cutoff point to remove bookings with uncommon values 
-                      (normal or fraudulent) for smart salt calculation, this is not necessary when calculating 
+        max_rpb     : float, max revenue per booking as cutoff point to remove bookings with uncommon values
+                      (normal or fraudulent) for smart salt calculation, this is not necessary when calculating
                       for daily performance
-        agg_on      : dimension to aggregate on 
+        agg_on      : dimension to aggregate on
         partner_id  : integer, relevant partner id for the specific account
-        costs_table : string, relevant cost table for the specific account 
-        nits_score_table: string, more reliable nits score table 
-        nits_postbook_table: string, postbook (less reliable) NITS table 
-        reservation_table: string, best source of reservation table 
-        affiliate_table: string, affiliate table which is joined with reservation table on afilliate id        
+        costs_table : string, relevant cost table for the specific account
+        nits_score_table: string, more reliable nits score table
+        nits_postbook_table: string, postbook (less reliable) NITS table
+        reservation_table: string, best source of reservation table
+        affiliate_table: string, affiliate table which is joined with reservation table on afilliate id
     """
 
     def __init__(self,start_date,end_date,pos=['All'],max_rpb=3000.0,partner_id=404815,
                 agg_on = ["hotel_id", "yyyy_mm_dd"],
-                costs_table = 'spmeta.trip_clickcost',
+                costs_table = 'spmeta.account_3_clickcost',
                 reservation_table = 'default.dw_reservation',
                 nits_score_table = 'nits.scores',
                 nits_postbook_table = 'default.reslog_nits_ng_postbooking_score',
@@ -157,25 +157,25 @@ class TripAdvisorStats(object):
         self.nits_postbook_table = nits_postbook_table
         self.affiliate_table = affiliate_table
         self.costs_table = costs_table
-        self.placements = placements  # temporarily set the device as such, now not allow for placements filter 
+        self.placements = placements  # temporarily set the device as such, now not allow for placements filter
 
     def get_stats_summary(self):
         """function to get performance summary stats at desired aggregated level.
 
         Returns:
-            spark dataframe with metrics such as yyyy_mm_dd, hotel_id, 
+            spark dataframe with metrics such as yyyy_mm_dd, hotel_id,
             nits_bookings,gross_bookings,nits_profit,gross_profit
         """
 
-        # Note that the code is adapted from tripadvisor bidding production code
-        # https://gitlab.booking.com/ShopPPC/tripadvisor-bidding-production/blob/master/pyspark-
+        # Note that the code is adapted from account_3 bidding production code
+        # https://gitlab.booking.com/ShopPPC/account_3-bidding-production/blob/master/pyspark-
         # scripts/bidding/cpc_plain_bidder.py
-        # we take TripAd reservations;
+        # we take account_3 reservations;
         # we use last click attribution so the hotel HAS to be taken
         # from the label
-        # we use the affiliate_id lookup table to find TripAd
+        # we use the affiliate_id lookup table to find account_3
         # we take hotel ufi from reservation
-        
+
         reservation_query = string.Template(
             """
             SELECT
@@ -195,7 +195,7 @@ class TripAdvisorStats(object):
                 SELECT id affiliate_id
                 , name affiliate_name
                 FROM ${affiliate_table}
-                WHERE partner_id = ${tripad_partner_id}
+                WHERE partner_id = ${account_3_partner_id}
                 and name rlike '(${placement1}|${placement2})'
                 ) a
                 ON r.affiliate_id = a.affiliate_id
@@ -209,7 +209,7 @@ class TripAdvisorStats(object):
                 "placement2" : self.placements[1],
                 "end_date" : self.end_date,
                 "start_date" : self.start_date,
-                "tripad_partner_id" : self.partner_id,
+                "account_3_partner_id" : self.partner_id,
                 "reservation_table": self.reservation_table,
                 "affiliate_table": self.affiliate_table
                 })
@@ -319,7 +319,7 @@ class TripAdvisorStats(object):
         perf_table = click_cost_agg_filtered.join(revenues_agg_filtered,
                                 on = ["hotel_id", "distribution", "placement","yyyy_mm_dd"],
                                 how = "outer")
-        
+
         if self.pos == ['All']:
             perf_table = perf_table\
                     .groupBy(*self.agg_on)\
@@ -337,7 +337,7 @@ class TripAdvisorStats(object):
             return (perf_table)
 
         else:
-            filtered_pos = spark.createDataFrame(pd.DataFrame(data = self.pos, 
+            filtered_pos = spark.createDataFrame(pd.DataFrame(data = self.pos,
                                                               columns = ["distribution"]))
             perf_table = perf_table\
                     .join(filtered_pos, on = "distribution", how = "inner")\
@@ -359,7 +359,7 @@ class TripAdvisorStats(object):
     def get_cancellations(self):
         """function to obtain cancellation (cancelled bookings and cancelled commissions) stats.
 
-        Returns: spark dataframe with cancelled commission, cancelled bookings and cancelled roomnights 
+        Returns: spark dataframe with cancelled commission, cancelled bookings and cancelled roomnights
                 at desired dimensions
         """
 
@@ -377,7 +377,7 @@ class TripAdvisorStats(object):
         SELECT id affiliate_id
                , name affiliate_name
           FROM ${affiliate_table}
-         WHERE partner_id = ${tripad_partner_id}
+         WHERE partner_id = ${account_3_partner_id}
            AND name rlike '(${placement1}|${placement2})'
            ) a
         ON r.affiliate_id = a.affiliate_id
@@ -391,7 +391,7 @@ class TripAdvisorStats(object):
         """).substitute({
                 "reservation_table" : self.reservation_table,
                 "affiliate_table" : self.affiliate_table,
-                "tripad_partner_id" : self.partner_id,
+                "account_3_partner_id" : self.partner_id,
                 "start_date" : self.start_date,
                 "end_date" : self.end_date,
                 "placement1" : self.placements[0],
@@ -403,16 +403,16 @@ class TripAdvisorStats(object):
                      .agg(f.sum("cancellations").alias("cancellations"),
                           f.sum("commission_cancelled").alias("cancelled_commission"),
                           f.sum("roomnights").alias("cancelled_roomnights"))
-            
+
         if self.pos == ['All']:
             return (cancellations_agg)
         else:
-            filtered_pos = spark.createDataFrame(pd.DataFrame(data = self.pos, 
+            filtered_pos = spark.createDataFrame(pd.DataFrame(data = self.pos,
                                                               columns = ["distribution"]))
             perf_table = cancellations_agg\
                     .join(filtered_pos, on = "distribution", how = "inner")
             return (cancellations_agg)
-        
+
     def get_agg_stats(self):
         """function that join cancellations data with performance metrics at
         desired aggregated dimensions

@@ -15,12 +15,12 @@ sc = spark.sparkContext
 from exp_lib.account.base import ExperimentBase, MetricBase
 
 # add mysql access module
-sys.path.append(os.path.join(os.getenv("HOME"),"git_tree/metasearch/python/utils/"))
+sys.path.append(os.path.join(os.getenv("HOME"),"git_tree/partners/python/utils/"))
 import MetaUtils as mu
 
 class account(ExperimentBase):
     """
-    Trivago account, child class of experimentBase class, the child class specifies the Trivago account specific exp_weight,
+    account_4 account, child class of experimentBase class, the child class specifies the account_4 account specific exp_weight,
     every other attributes inherit from experimentBase class
 
     Attributes:
@@ -45,7 +45,7 @@ class account(ExperimentBase):
 
 class NitsBookings(MetricBase):
     """
-    Nits Bookings (per Property) class, child class of MetricBase class, the child class obtain the defined metrics for the relevant 
+    Nits Bookings (per Property) class, child class of MetricBase class, the child class obtain the defined metrics for the relevant
     account
 
     Attributes:
@@ -64,8 +64,8 @@ class NitsBookings(MetricBase):
 
     def compute(self):
 
-        trivagoStats = TrivagoStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
-        return ( trivagoStats.get_stats_summary()
+        accountFourStats = AccountFourStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
+        return ( accountFourStats.get_stats_summary()
                    .select("hotel_id","yyyy_mm_dd",self.metric_name) )
 
 class NitsProfit(MetricBase):
@@ -88,8 +88,8 @@ class NitsProfit(MetricBase):
 
     def compute(self):
 
-        trivagoStats = TrivagoStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
-        return ( trivagoStats.get_stats_summary()
+        accountFourStats = AccountFourStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
+        return ( accountFourStats.get_stats_summary()
                    .select("hotel_id","yyyy_mm_dd",self.metric_name) )
 
 class GrossBookings(MetricBase):
@@ -113,8 +113,8 @@ class GrossBookings(MetricBase):
 
     def compute(self):
 
-        trivagoStats = TrivagoStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
-        return ( trivagoStats.get_stats_summary()
+        accountFourStats = AccountFourStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
+        return ( accountFourStats.get_stats_summary()
                    .select("hotel_id","yyyy_mm_dd",self.metric_name) )
 
 class GrossProfit(MetricBase):
@@ -138,13 +138,13 @@ class GrossProfit(MetricBase):
 
     def compute(self):
 
-        trivagoStats = TrivagoStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
-        return ( trivagoStats.get_stats_summary()
+        accountFourStats = AccountFourStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
+        return ( accountFourStats.get_stats_summary()
                    .select("hotel_id","yyyy_mm_dd",self.metric_name) )
 
-class TrivagoStats(object):
+class AccountFourStats(object):
     """
-    TrivagoStats class, obtain data for relevant performance metrics
+    AccountFourStats class, obtain data for relevant performance metrics
 
     Attributes:
         start_date  : string, the start date to obtain performance
@@ -160,9 +160,9 @@ class TrivagoStats(object):
         affiliate_table:   string, affiliate table which is joined with reservation table on afilliate id
     """
 
-    def __init__(self,start_date,end_date,pos=['All'], 
+    def __init__(self,start_date,end_date,pos=['All'],
                 max_rpb = 3000.0, partner_id = 413084,
-                performance_table = 'spmeta.trivago_performance',
+                performance_table = 'spmeta.account_4_performance',
                 reservation_table = 'ppc_sp.SPReservation',
                 affiliate_table = 'bp_slice.FlatAffiliate',
                 agg_on = ['hotel_id', 'yyyy_mm_dd']):
@@ -176,10 +176,10 @@ class TrivagoStats(object):
         self.reservation_table = reservation_table
         self.affiliate_table = affiliate_table
         self.agg_on = agg_on
-        
+
 
     def get_stats_summary(self):
-        """function to obtain performance stats for trivago at desired aggregated dimensions
+        """function to obtain performance stats for account_4 at desired aggregated dimensions
 
         Returns:
             spark dataframe with performance metrics of nits_bookings,gross_bookings,nits_profit,gross_profit,
@@ -203,9 +203,9 @@ class TrivagoStats(object):
                                .withColumn("nits_profit",f.expr("nits_commission-cost"))\
                                .withColumn("gross_profit", f.expr("gross_commission-cost"))
         else:
-            filtered_pos = spark.createDataFrame(pd.DataFrame(data = self.pos, 
+            filtered_pos = spark.createDataFrame(pd.DataFrame(data = self.pos,
                                                               columns = ["pos"]))
-            
+
             perf_table = perf_table.join(filtered_pos, on = "pos", how = "inner")\
                                 .groupBy(*self.agg_on)\
                                 .agg(f.sum("nits_bookings").alias("nits_bookings")
@@ -241,13 +241,13 @@ class TrivagoStats(object):
             WHERE r.date_cancelled >= '{start_date}'
               AND r.date_cancelled < '{end_date}'
               AND r.status not in ('fraudulent','test','unknown')
-              AND r.partner_id = {trivago_partner_id}
+              AND r.partner_id = {account_4_partner_id}
             GROUP BY yyyy_mm_dd, pos, coalesce(r.dest_id, r.hotel_id)
             """.format(reservation_table = self.reservation_table,
                         affiliate_table = self.affiliate_table,
                         start_date = self.start_date,
                         end_date = self.end_date,
-                        trivago_partner_id = self.partner_id)
+                        account_4_partner_id = self.partner_id)
 
         cancellations = pd.read_sql_query(cancellation_query, con=msql)
         msql.close()

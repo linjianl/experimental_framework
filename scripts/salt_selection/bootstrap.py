@@ -43,19 +43,19 @@ def main():
     parser.add_argument("--test", nargs='+', type=int, default=0)
     parser.add_argument("--period", type=int, default=28)
     parser.add_argument("--ntrials", type=int, default=10000)
-    parser.add_argument("--pos", type=str, default='All') # only for trivago,tripadvisor for now, format: US,GB,RU
-    parser.add_argument("--user_name", type = str, default = "lijia") 
+    parser.add_argument("--pos", type=str, default='All')
+    parser.add_argument("--user_name", type = str, default = "lijia")
     args = parser.parse_args()
-    
+
     logging.info("Initialising with the following parameters:")
     logging.info(str(args))
-    
-    #  file zipping 
+
+    #  file zipping
     current_dir = os.path.dirname(os.path.realpath(__file__))
     current_dir = current_dir[:current_dir.find('scripts')]
     mod_file = os.path.join(current_dir, "exp_lib/python/utils/zip_module.py")
     sc.addPyFile(mod_file)
-    
+
     mod_zipping = importlib.import_module("zip_module")
     files = os.listdir(os.path.dirname(os.path.realpath(__file__)))
     files.append('exp_lib.zip')
@@ -63,30 +63,30 @@ def main():
     current_dir = os.path.dirname(os.path.realpath(__file__))
     zipped_file = os.path.join(current_dir,"exp_lib.zip")
     sc.addPyFile(zipped_file)
-    
-    # important relevant module for the account 
+
+    # important relevant module for the account
     mod = importlib.import_module("exp_lib.account.{0}".format(args.account))
     Metrics = [mod.NitsBookings,mod.NitsProfit]
     logging.info("Bootstrapping on metrics: {}".format([x for x in Metrics]))
 
     data = mod.account(Metrics,
-                       run_date=args.run_date, 
+                       run_date=args.run_date,
                        base_salt=args.base_salt,
                        ntrials = args.ntrials,
-                       pos=args.pos, 
+                       pos=args.pos,
                        period = args.period,
                        exp_groups = args.exp_groups,
                        control = args.control,
                        test = args.test,
                        exp_weights = args.exp_weights)
-    
+
     bootstrapped_table = data.get_bootstrapped().cache()
     repartition_to_blocksize(bootstrapped_table).registerTempTable("bootstrapped_table")
-    
-    table_name = ('_'.join([args.account, 'bootstrapping', datetime.strptime(args.run_date, "%Y-%m-%d").strftime("%Y%m%d"), 
+
+    table_name = ('_'.join([args.account, 'bootstrapping', datetime.strptime(args.run_date, "%Y-%m-%d").strftime("%Y%m%d"),
                             "nsalt",str(args.ntrials)]))
     logging.info("the table name is {0}".format(table_name))
-    
+
     spark.sql("DROP TABLE IF EXISTS {0}.{1}".format(args.user_name, table_name))
     spark.sql("CREATE TABLE {0}.{1} as SELECT * FROM bootstrapped_table".format(args.user_name, table_name))
     logging.info("Number of rows in the {0} bootstrapping table of {1} salts are : {2}".format(args.account, args.ntrials,

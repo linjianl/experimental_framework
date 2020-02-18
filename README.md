@@ -1,3 +1,3 @@
-#  Experiment Framework code 
+#  Experiment Framework code
 
-Code related to  experimental framework (salt selection, bootstrapping, methods evaluation, data pipeline and related functions)
+Code related to  experimental framework (salt selection, bootstrapping, methods evaluation and related functions)

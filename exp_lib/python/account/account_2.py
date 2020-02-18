@@ -13,7 +13,7 @@ sc = spark.sparkContext
 from exp_lib.account.base import ExperimentBase, MetricBase
 
 class account(ExperimentBase):
-    """Kayak account, child class of experimentBase class, the child class specifies the Kayak account specific exp_weight,
+    """account_2 account, child class of experimentBase class, the child class specifies the account_2 account specific exp_weight,
        every other attributes inherit from experimentBase class
 
     Attributes:
@@ -38,7 +38,7 @@ class account(ExperimentBase):
                                       base_salt,ntrials,pos)
 
 class NitsBookings(MetricBase):
-    """Nits Bookings (per Property) class, child class of MetricBase class, the child class obtain the defined 
+    """Nits Bookings (per Property) class, child class of MetricBase class, the child class obtain the defined
     metrics for the relevant account
 
     Attributes:
@@ -57,12 +57,12 @@ class NitsBookings(MetricBase):
 
     def compute(self):
 
-        kayakStats = KayakStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
-        return ( kayakStats.get_stats_summary()
+        accountTwoStats = AccountTwoStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
+        return ( accountTwoStats.get_stats_summary()
                    .select("hotel_id","yyyy_mm_dd",self.metric_name) )
 
 class NitsProfit(MetricBase):
-    """Nits Profit (per Property) class, child class of MetricBase class, the child class obtain the defined 
+    """Nits Profit (per Property) class, child class of MetricBase class, the child class obtain the defined
     metrics for the relevant saccount
 
     Attributes:
@@ -81,12 +81,12 @@ class NitsProfit(MetricBase):
 
     def compute(self):
 
-        kayakStats = KayakStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
-        return ( kayakStats.get_stats_summary()
+        accountTwoStats = AccountTwoStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
+        return ( accountTwoStats.get_stats_summary()
                    .select("hotel_id","yyyy_mm_dd",self.metric_name) )
 
 class GrossBookings(MetricBase):
-    """Gross Bookings (per Property) class, child class of MetricBase class, the child class obtain the defined 
+    """Gross Bookings (per Property) class, child class of MetricBase class, the child class obtain the defined
     metrics for the relevant account
 
     Attributes:
@@ -105,13 +105,13 @@ class GrossBookings(MetricBase):
 
     def compute(self):
 
-        kayakStats = KayakStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
-        return ( kayakStats.get_stats_summary()
+        accountTwoStats = AccountTwoStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
+        return ( accountTwoStats.get_stats_summary()
                    .select("hotel_id","yyyy_mm_dd",self.metric_name) )
 
 class GrossProfit(MetricBase):
     """
-    GrossProfit (per Property) class, child class of MetricBase class, the child class obtain the defined metrics 
+    GrossProfit (per Property) class, child class of MetricBase class, the child class obtain the defined metrics
     for the relevant account
 
     Attributes:
@@ -130,38 +130,38 @@ class GrossProfit(MetricBase):
 
     def compute(self):
 
-        kayakStats = KayakStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
-        return ( kayakStats.get_stats_summary()
+        accountTwoStats = AccountTwoStats(start_date=self.start_date,end_date=self.end_date,pos=self.pos)
+        return ( accountTwoStats.get_stats_summary()
                    .select("hotel_id","yyyy_mm_dd",self.metric_name) )
 
-class KayakStats(object):
+class AccountTwoStats(object):
     """
-    KayakStats class, obtain data for relevant performance metrics and also cancellations data, currently doe snot
+    AccountTwoStats class, obtain data for relevant performance metrics and also cancellations data, currently doe snot
     allow for filtering for pos
 
     Attributes:
         start_date  : string, the start date to obtain performance
         end_date    : string, the end date to obtain performance
         pos         : string or list, point of sale, booker_country
-        max_rpb     : float, max revenue per booking as cutoff point to remove bookings with uncommon values 
-                      (normal or fraudulent) for smart salt calculation, this is not necessary when calculating 
+        max_rpb     : float, max revenue per booking as cutoff point to remove bookings with uncommon values
+                      (normal or fraudulent) for smart salt calculation, this is not necessary when calculating
                       for daily performance
         partner_id  : integer, relevant partner id for the specific account
-        agg_on      : dimension to aggregate on 
-        nits_score_table: string, more reliable nits score table 
-        nits_postbook_table: string, postbook (less reliable) NITS table 
-        web_costs_table : string, relevant cost table for the specific account, kayak separates web(desktop) and 
+        agg_on      : dimension to aggregate on
+        nits_score_table: string, more reliable nits score table
+        nits_postbook_table: string, postbook (less reliable) NITS table
+        web_costs_table : string, relevant cost table for the specific account, account_2 separates web(desktop) and
                           mobile
-        mobile_costs_table: string, relevant cost table for the specific account 
-        reservation_table: string, best source of reservation table 
-        affiliate_table: string, affiliate table which is joined with reservation table on afilliate id 
+        mobile_costs_table: string, relevant cost table for the specific account
+        reservation_table: string, best source of reservation table
+        affiliate_table: string, affiliate table which is joined with reservation table on afilliate id
     """
 
     def __init__(self,start_date,end_date,pos = ['All'],max_rpb=3000.0,partner_id = 431843,
                 devices= ['web', 'mobile'],
                 agg_on = ["hotel_id", "yyyy_mm_dd"],
-                web_costs_table = 'spmeta.kayak_stats_coreweb',
-                mobile_costs_table = 'spmeta.kayak_stats_coremobile',
+                web_costs_table = 'spmeta.account_2_stats_coreweb',
+                mobile_costs_table = 'spmeta.account_2_stats_coremobile',
                 reservation_table = 'default.dw_reservation',
                 nits_score_table = 'nits.scores',
                 nits_postbook_table = 'default.reslog_nits_ng_postbooking_score',
@@ -182,10 +182,10 @@ class KayakStats(object):
         self.affiliate_table = affiliate_table
 
     def get_stats_summary(self):
-        """function to obtain performance stats for kayak.
+        """function to obtain performance stats for account_2.
 
         Returns:
-            spark dataframe with metrics such as yyyy_mm_dd, hotel_id, 
+            spark dataframe with metrics such as yyyy_mm_dd, hotel_id,
             nits_bookings,gross_bookings,nits_profit,gross_profit
         """
 
@@ -250,7 +250,7 @@ class KayakStats(object):
             SELECT id affiliate_id
                    , name affiliate_name
               FROM {affiliate_table}
-             WHERE partner_id = {kayak_partner_id}
+             WHERE partner_id = {account_2_partner_id}
                AND name rlike '([_][Cc]ore[.])'
                ) a
           ON r.affiliate_id = a.affiliate_id
@@ -259,7 +259,7 @@ class KayakStats(object):
           AND r.status not in ('fraudulent', 'test', 'unknown')
 
         """.format(start_date = self.start_date, end_date = self.end_date,
-                   max_rpb = self.max_rpb, kayak_partner_id = self.partner_id,
+                   max_rpb = self.max_rpb, account_2_partner_id = self.partner_id,
                    reservation_table = self.reservation_table,
                    affiliate_table = self.affiliate_table)
 
@@ -332,7 +332,7 @@ class KayakStats(object):
 
     def get_cancellations(self):
         """function to obtain cancellation (cancelled bookings and cancelled commissions)
-        stats for kayak at agg_on level
+        stats for account_2 at agg_on level
 
         Returns:
             spark dataframe of number of cancellations, cancelled cancelled_roomnights
@@ -358,7 +358,7 @@ class KayakStats(object):
         SELECT id affiliate_id
                , name affiliate_name
           FROM {affiliate_table}
-         WHERE partner_id = {kayak_partner_id}
+         WHERE partner_id = {account_2_partner_id}
            AND name rlike '([_][Cc]ore[.])'
            ) a
         ON r.affiliate_id = a.affiliate_id
@@ -377,7 +377,7 @@ class KayakStats(object):
                    end)
         """.format(reservation_table = self.reservation_table,
                    affiliate_table = self.affiliate_table,
-                   kayak_partner_id = self.partner_id,
+                   account_2_partner_id = self.partner_id,
                    start_date = self.start_date,
                    end_date = self.end_date)
 
